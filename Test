@@ -66,3 +66,65 @@ def favorite_workspace(
             "favorited_date": new_favorite.favorited_date
         }
     }
+
+
+
+
+
+
+
+
+
+
+
+from fastapi import APIRouter, Depends, HTTPException
+from sqlmodel import Session, select
+from app.models import UserWorkspaceFavorited, Workspace
+from app.api.deps import get_db
+
+router = APIRouter()
+
+@router.get("/workspaces/favorites", summary="Get all favorited workspaces for a user")
+def get_favorited_workspaces(
+    user_id: str,
+    db: Session = Depends(get_db)
+):
+    """
+    Retrieve all favorited workspaces for a specific user.
+    """
+    # Query to get all favorited workspace IDs for the user
+    favorited_statement = (
+        select(UserWorkspaceFavorited.workspace_id)
+        .where(UserWorkspaceFavorited.user_id == user_id)
+    )
+    favorited_workspaces = db.exec(favorited_statement).all()
+
+    if not favorited_workspaces:
+        return {
+            "status_code": 200,
+            "message": "No favorited workspaces found for the user",
+            "data": []
+        }
+
+    # Retrieve full workspace details for the favorited workspaces
+    workspace_ids = [fav.workspace_id for fav in favorited_workspaces]
+    workspaces_statement = select(Workspace).where(Workspace.id.in_(workspace_ids))
+    workspaces = db.exec(workspaces_statement).all()
+
+    # Build the response
+    response_data = []
+    for workspace in workspaces:
+        response_data.append({
+            "workspace_id": str(workspace.id),
+            "workspace_name": workspace.name,
+            "is_active": workspace.is_active,
+            "is_public": workspace.is_public,
+            "created_at": workspace.created,  # Assuming `created` is the creation timestamp
+            "updated_at": workspace.last_updated  # Assuming `last_updated` is the update timestamp
+        })
+
+    return {
+        "status_code": 200,
+        "message": "Favorited workspaces retrieved successfully",
+        "data": response_data
+    }
