@@ -128,3 +128,64 @@ def get_favorited_workspaces(
         "message": "Favorited workspaces retrieved successfully",
         "data": response_data
     }
+
+
+
+
+
+
+
+from fastapi import APIRouter, Depends, Query
+from sqlmodel import Session, select
+from app.models import User, UserWorkspaceLink, Workspace
+from app.api.deps import get_db
+from typing import Optional
+
+router = APIRouter()
+
+@router.get("/workspaces/admin", summary="Get all admin workspaces with ILIKE search")
+def get_admin_workspaces(
+    search: Optional[str] = Query(None, description="Search for users by username"),
+    skip: int = Query(0, ge=0, description="Number of records to skip"),
+    limit: int = Query(10, gt=0, description="Maximum number of records to return"),
+    db: Session = Depends(get_db)
+):
+    """
+    Retrieve all admin workspaces filtered by role and optional username search.
+    """
+    # Query to get users with the role "workspace_admin"
+    statement = (
+        select(User, UserWorkspaceLink, Workspace)
+        .join(UserWorkspaceLink, User.id == UserWorkspaceLink.user_id)
+        .join(Workspace, UserWorkspaceLink.workspace_id == Workspace.id)
+        .where(UserWorkspaceLink.role == "workspace_admin")
+    )
+
+    # Apply ILIKE search if provided
+    if search:
+        statement = statement.where(User.username.ilike(f"%{search}%"))
+
+    # Apply pagination
+    statement = statement.offset(skip).limit(limit)
+
+    # Execute the query
+    results = db.exec(statement).all()
+
+    # Build response
+    response_data = []
+    for user, link, workspace in results:
+        response_data.append({
+            "user_id": str(user.id),
+            "username": user.username,
+            "workspace_id": str(workspace.id),
+            "workspace_name": workspace.name,
+            "is_active": workspace.is_active,
+            "is_public": workspace.is_public,
+            "role": link.role
+        })
+
+    return {
+        "status_code": 200,
+        "message": "Admin workspaces retrieved successfully",
+        "data": response_data
+    }
