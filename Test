@@ -135,6 +135,44 @@ def get_favorited_workspaces(
 
 
 
+
+
+
+    # Map admin users to workspaces
+    admin_user_map = {}
+    for link, user in admin_users_results:
+        if link.workspace_id not in admin_user_map:
+            admin_user_map[link.workspace_id] = []
+        admin_user_map[link.workspace_id].append({
+            "user_id": str(user.id),
+            "username": user.username
+        })
+
+    # Build response
+    response_data = []
+    for workspace in workspaces:
+        response_data.append({
+            "workspace_id": str(workspace.id),
+            "workspace_name": workspace.name,
+            "tags": workspace.tags,
+            "description": workspace.description,
+            "is_active": workspace.is_active,
+            "is_public": workspace.is_public,
+            "is_favorited": is_favorite,
+            "created_at": workspace.created_date,
+            "updated_at": workspace.last_updated_date,
+            "admins": admin_user_map.get(workspace.id, [])
+        })
+
+    return {
+        "status_code": 200,
+        "message": "Workspaces retrieved successfully",
+        "data": response_data
+    }
+
+
+
+
 from fastapi import APIRouter, Depends, Query
 from sqlmodel import Session, select
 from app.models import User, UserWorkspaceLink, Workspace
