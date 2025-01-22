@@ -1,0 +1,68 @@
+from fastapi import APIRouter, Depends, HTTPException, status
+from sqlmodel import Session, select
+from app.models import UserWorkspaceFavorited, Workspace
+from app.api.deps import get_db
+from datetime import datetime, timezone
+
+router = APIRouter()
+
+@router.post("/workspaces/favorite", summary="Favorite a workspace")
+def favorite_workspace(
+    workspace_id: str,
+    user_id: str,
+    db: Session = Depends(get_db)
+):
+    """
+    Mark a workspace as favorite for a user.
+    """
+    # Check if the workspace exists
+    workspace_statement = select(Workspace).where(Workspace.id == workspace_id)
+    workspace = db.exec(workspace_statement).first()
+
+    if not workspace:
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND,
+            detail="Workspace not found"
+        )
+
+    # Check if the workspace is already favorited by the user
+    favorite_check_statement = (
+        select(UserWorkspaceFavorited)
+        .where(
+            (UserWorkspaceFavorited.workspace_id == workspace_id) &
+            (UserWorkspaceFavorited.user_id == user_id)
+        )
+    )
+    existing_favorite = db.exec(favorite_check_statement).first()
+
+    if existing_favorite:
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail="Workspace is already favorited by the user"
+        )
+
+    # Create a new favorite entry
+    new_favorite = UserWorkspaceFavorited(
+        user_id=user_id,
+        workspace_id=workspace_id,
+        favorited_date=datetime.now(timezone.utc)
+    )
+    db.add(new_favorite)
+
+    # Mark workspace as favorite if applicable (optional)
+    workspace.is_favorited = True
+    db.add(workspace)
+
+    # Commit changes
+    db.commit()
+    db.refresh(new_favorite)
+
+    return {
+        "status_code": 200,
+        "message": "Workspace has been successfully marked as favorite",
+        "data": {
+            "workspace_id": workspace_id,
+            "user_id": user_id,
+            "favorited_date": new_favorite.favorited_date
+        }
+    }
