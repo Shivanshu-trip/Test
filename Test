@@ -227,3 +227,138 @@ def get_admin_workspaces(
         "message": "Admin workspaces retrieved successfully",
         "data": response_data
     }
+
+
+
+
+
+
+
+
+AutoBI
+
+AutoBI is a powerful and flexible business intelligence tool designed to help users generate insights from their data using natural language queries. This project leverages machine learning models to interpret user queries and generate SQL statements to retrieve the necessary data.
+
+Table of Contents
+
+API Reference
+
+Prerequisites
+
+Installation
+
+Usage
+
+Project Structure
+
+Database Migrations (Alembic)
+
+Contributing
+
+API Reference
+
+For detailed API documentation, please visit the API Docs.
+
+Prerequisites
+
+Python 3.10
+
+PostgreSQL (for database storage)
+
+Docker & Kubernetes (if deploying)
+
+Clone the Repository
+
+To get started, clone the repository:
+
+ git clone https://github.com/your-repo/autobi.git
+ cd autobi
+
+Installation
+
+To set up the project locally, follow these steps:
+
+pip install --upgrade pip==23.2.1
+pip install poetry==1.8.3
+poetry install
+pip install pre-commit
+pre-commit install --hook-type pre-push
+
+Usage
+
+To start the application, run:
+
+python -m uvicorn src.app.main:app --reload --host 0.0.0.0 --port 8080
+
+Project Structure
+
+AUTOBI
+│── backend
+│── frontend
+│── jobs
+│── kube/np
+│── .gitignore
+│── .gitlab-ci.yml
+│── src/
+│   ├── app/
+│   │   ├── main.py        # Entry point for the FastAPI application
+│   │   ├── routers/       # Contains all the route handlers
+│   │   ├── utils/         # Utility functions and helpers
+│   │   ├── models/        # Database models
+│   │   ├── migrations/    # Alembic migration scripts
+│   │   ├── core/          # Core business logic
+│   │   ├── database.py    # Database connection and session
+│   │   ├── config_setup.py # Configuration setup
+│   │   ├── app_initializer.py # Initializes components
+│   │   ├── tests/         # Unit and integration tests
+│── README.md  # Project documentation
+│── pyproject.toml  # Poetry configuration
+
+Database Migrations (Alembic)
+
+The AutoBI project uses Alembic for database migrations. To set up and run migrations, follow these steps:
+
+Initialize Alembic (if not already initialized):
+
+alembic init src/migrations
+
+Generate a new migration:
+
+alembic revision --autogenerate -m "describe_changes"
+
+Apply migrations:
+
+alembic upgrade head
+
+Downgrade migrations (if needed):
+
+alembic downgrade -1
+
+Contributing
+
+We welcome contributions to the AutoBI project. To contribute, follow these steps:
+
+Fork the repository.
+
+Create a new branch:
+
+git checkout -b feature/your-feature-name
+
+Make your changes.
+
+Commit your changes:
+
+git commit -m "Add some feature"
+
+Push to the branch:
+
+git push origin feature/your-feature-name
+
+Open a pull request.
+
+Ensure your code adheres to coding standards and includes appropriate tests.
+
+Author: Shivansh Mathur | Incedo Inc.
+
+For further assistance, contact the development team.
+
