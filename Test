@@ -362,3 +362,57 @@ Author: Shivansh Mathur | Incedo Inc.
 
 For further assistance, contact the development team.
 
+
+
+
+
+Using Alembic in VS Code
+
+If you are using VS Code, follow these steps to efficiently manage Alembic migrations:
+
+1. Open VS Code and Navigate to the Project Directory
+
+Open VS Code and use the built-in terminal to move to your project folder:
+
+cd autobi
+
+2. Activate the Virtual Environment
+
+If using a virtual environment:
+
+source venv/bin/activate  # On macOS/Linux
+venv\Scripts\activate  # On Windows
+
+3. Run Alembic Commands in the Terminal
+
+You can execute Alembic commands directly in VS Code's terminal:
+
+Generate a new migration:
+
+alembic revision --autogenerate -m "your_migration_name"
+
+Apply migrations:
+
+alembic upgrade head
+
+Downgrade migrations:
+
+alembic downgrade -1
+
+4. View and Edit Migrations in VS Code
+
+Open src/migrations/versions/ in VS Code.
+
+Select the latest migration file to review or manually adjust the changes before applying.
+
+5. Troubleshooting in VS Code
+
+If Alembic fails to detect changes, ensure your models and database metadata are properly configured.
+
+Run:
+
+alembic check
+
+to verify migrations.
+
+By following these steps, you can seamlessly manage Alembic migrations within VS Code while keeping your database schema in sync with your models.
