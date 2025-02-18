@@ -416,3 +416,229 @@ alembic check
 to verify migrations.
 
 By following these steps, you can seamlessly manage Alembic migrations within VS Code while keeping your database schema in sync with your models.
+
+
+
+
+
+
+
+
+
+AutoBI is a self-service platform that enables end users to use natural language processing to translate queries into SQL, allowing users to interact with databases using natural language. The platform serves as the foundation for enabling users to onboard their own data assets (DBs) and contextual metadata into a single northstar platform.
+
+Table of Contents
+
+Overview
+
+Problems We Are Solving
+
+What is In Scope
+
+Use Cases
+
+Common Features
+
+Key Functional Requirements
+
+User Prompt Flow
+
+API Reference
+
+Prerequisites
+
+Installation
+
+Creating a Virtual Environment
+
+Running Database Migrations (Alembic)
+
+Usage
+
+Project Structure
+
+Environment Variables
+
+Database Symbols and Usage
+
+Using Alembic in VS Code
+
+Contributing
+
+Overview
+
+AutoBI is a self-service platform that enables users to translate queries into SQL, leveraging natural language processing. It helps users interact with databases without needing direct SQL knowledge. The platform is designed to unify data assets and contextual metadata.
+
+Problems We Are Solving
+
+Reducing cognitive load on data analysts & power users (Reduction in dashboards, BI reports).
+
+Reducing time spent finding key insights (Quicker insight to action).
+
+Automating decision-making through interactive prompt-based querying.
+
+A single platform to mitigate operational expenses.
+
+What is In Scope
+
+Executive Reporting & Summarization (insight generation).
+
+Self-Service capabilities through the VEGAS portal.
+
+Multi-DB query execution engine (BigQuery, Postgres, Oracle, etc.).
+
+Support for multiple LLM models.
+
+Visualization Auto Generation.
+
+Use Cases
+
+Network Genie
+
+Open platform leveraging Kinetica (Starcoder) for productizing text-to-prompt queries against geospatial data assets.
+
+Supports near real-time query SLAs/SLOs.
+
+AskBI
+
+A natural language-based business insights tool for SQL generation using a modular LLM approach.
+
+Enables executive reports, summaries, and more.
+
+NLQ Market Intelligence
+
+A Market Intelligence NLQ framework leveraging third-party assets.
+
+Helps identify unique opportunities for Verizon by analyzing competitor insights.
+
+Common Features
+
+Need for complex, data-intensive geospatial visualizations & slice-and-dice analytics.
+
+Modular LLM framework for different backends.
+
+Support for BigQuery & common DB platforms (Postgres, MySQL, Oracle).
+
+Support for relatively low latency response times (2-5s).
+
+Easily onboard and rapidly prototype new datasets & data products.
+
+Key Functional Requirements
+
+API Interface Layer
+
+Self-service API deployment (Chatbots, BI dashboards, etc.).
+
+Token-based API key access.
+
+Log, Monitoring & Metrics.
+
+Request throttling.
+
+Service Catalog.
+
+Security & Audit Layer
+
+Audits query prompts before execution.
+
+Query prompt safeguards (SQL injections, volatile prompts, query validation).
+
+Context Definition Layer
+
+Specifies information about dataset tables and rules for referencing them.
+
+LLM uses this to generate SQL that references objects.
+
+LLM Serving Layer
+
+Self-service LLM model selection.
+
+LLM model hosting and versioning.
+
+SQL Execution Layer
+
+Database abstraction layer (Integrates with multiple DB engines).
+
+Database query planner (predicate pushdown).
+
+Query acceleration & caching (low-latency response times).
+
+User Prompt Flow
+
+User Asks a Question → Query is passed through the API Interface Layer.
+
+Context Definition Processing → Uses knowledge repositories & vector embeddings.
+
+Security Checks & Validation → Query is validated against defined safeguards.
+
+LLM Generates SQL → Query is processed through the LLM Serving Layer.
+
+SQL Execution Layer → Query is executed against the relevant DBs.
+
+Feedback Mechanism → Results are reviewed, improving query accuracy over time.
+
+API Reference
+
+For detailed API documentation, please visit the API Docs.
+
+Prerequisites
+
+Python 3.10
+
+PostgreSQL (for database storage)
+
+Docker & Kubernetes (if deploying)
+
+Installation
+
+To set up the project locally, follow these steps:
+
+pip install --upgrade pip==23.2.1
+pip install -r requirements.txt
+pip install pre-commit
+pre-commit install --hook-type pre-push
+
+Creating a Virtual Environment
+
+python -m venv venv
+source venv/bin/activate  # On macOS/Linux
+venv\Scripts\activate  # On Windows
+
+Running Database Migrations (Alembic)
+
+alembic init src/migrations
+alembic revision --autogenerate -m "initial_migration"
+alembic upgrade head
+alembic check
+
+Usage
+
+python -m uvicorn src.app.main:app --reload --host 0.0.0.0 --port 8080
+
+Environment Variables
+
+Defined in the .env file, including database credentials, API keys, and Celery configurations.
+
+Database Symbols and Usage
+
+PostgreSQL (🐘): Scalable relational database, ideal for structured queries.
+
+MariaDB (🐬): MySQL-compatible DB with performance enhancements.
+
+BigQuery (🔍): Google’s managed, serverless analytics platform for real-time insights.
+
+Using Alembic in VS Code
+
+Use the VS Code terminal to manage migrations with Alembic.
+
+View and edit migration scripts under src/migrations/versions/.
+
+Contributing
+
+To contribute, follow these steps:
+
+git checkout -b feature/your-feature-name
+git commit -m "Add new feature"
+git push origin feature/your-feature-name
+
+Add your files
